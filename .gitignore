@@ -22,7 +22,6 @@
 .pub/
 build/
 coverage/
-lib/generated_plugin_registrant.dart
 # For library packages, don’t commit the pubspec.lock file.
 # Regenerating the pubspec.lock file lets you test your package against the latest compatible versions of its dependencies.
 # See https://dart.dev/guides/libraries/private-files#pubspeclock
@@ -209,6 +208,6 @@ fabric.properties
 
 firebase.json
 lib/firebase_options.dart
-web/index.html
+web/firebaseConfig.js
 
-sangmokchoi.github.io/web/index.html
+sangmokchoi.github.io/web/firebaseConfig.js
