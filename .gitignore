@@ -208,7 +208,7 @@ fabric.properties
 
 firebase.json
 lib/firebase_options.dart
-#web/firebaseConfig.js
+web/firebaseConfig.js
 
 sangmokchoi.github.io/web/firebaseConfig.js
 
