@@ -67,6 +67,40 @@ class HomeViewModel {
     }
   }
 
+  String getGitHubUrl(String key) {
+    switch (key) {
+      case 'letter':
+        return 'https://github.com/sangmokchoi/letter-from-late-night';
+      case 'muglite':
+        return 'https://github.com/sangmokchoi/mug-lite';
+      case 'twp4bg':
+        return 'https://github.com/sangmokchoi/Trip-Sketcher';
+      case 'dnpp':
+        return 'https://github.com/sangmokchoi/DNPP';
+      case 'jjgsr':
+        return 'https://github.com/sangmokchoi/JJGSR';
+      default:
+        return '';
+    }
+  }
+
+  String getAppDescription(String key, AppLocalizations locale) {
+    switch (key) {
+      case 'letter':
+        return locale.letterDescription;
+      case 'muglite':
+        return locale.mugliteDescription;
+      case 'twp4bg':
+        return locale.twp4bgDescription;
+      case 'dnpp':
+        return locale.dnppDescription;
+      case 'jjgsr':
+        return locale.jjgsrDescription;
+      default:
+        return '';
+    }
+  }
+
 }
 
 final homeViewModelProvider = Provider<HomeViewModel>((ref) {

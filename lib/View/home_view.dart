@@ -44,9 +44,48 @@ class _HomeViewState extends ConsumerState<HomeView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  localizations.myName,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                Row(
+                  children: [
+                    // github logo
+                    Container(
+                      margin: EdgeInsets.only(right: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Colors.transparent),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            // 그림자 색상
+                            spreadRadius: 0.1,
+                            // 그림자 확산 정도
+                            blurRadius: 3,
+                            // 그림자 흐림 정도
+                            offset: Offset(0, 3), // 그림자의 오프셋(위치)
+                          ),
+                        ],
+                      ),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final url = Uri.parse(kMyGitHubUrl);
+
+                          if (!await launchUrl(url)) {
+                            throw Exception('Could not launch $url');
+                          }
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          foregroundImage: AssetImage('images/GitHub Icon.png')
+                              as ImageProvider<Object>,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      localizations.myName,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20.0),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -106,6 +145,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           );
                         } else {
                           final appName = kAppNameList[category]!;
+                          final _scrollController = ScrollController();
                           // App List
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -121,7 +161,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                 homeVM.getSubtitle(appName, localizations),
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
-                                    fontSize: 16.0),
+                                    fontSize: 14.0),
                               ),
                               trailing: Icon(
                                 _expandedState[category] ?? true
@@ -139,159 +179,259 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      top: 5.0, bottom: 8.0, left: 18.0, right: 18.0),
+                                      top: 5.0,
+                                      bottom: 8.0,
+                                      left: 18.0,
+                                      right: 18.0),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-
-                                      Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: Text('Download link', style: TextStyle(fontSize: 14.0, color: Colors.grey, fontWeight: FontWeight.bold),),
+                                      // description
+                                      Container(
+                                        height: 250,
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                            top: 10.0, bottom: 15.0, left: 20.0, right: 20.0),
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 15.0),
+                                        child: Scrollbar(
+                                          thickness: 3.0,
+                                          controller: _scrollController,
+                                          thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                              controller: _scrollController,
+                                              child: Text(
+                                                  homeVM.getAppDescription(
+                                                      appName, localizations))),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(30),
+                                        ),
                                       ),
-                                      // images
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      // 스크린샷
+                                      Column(
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
+                                          SizedBox(
+                                            height:
+                                            MediaQuery.of(context).size.height *
+                                                0.43,
+                                            child: PageView.builder(
+                                              padEnds: false,
+                                              itemCount: categoryImages.length,
+                                              controller: homeVM.pageController,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (BuildContext context,
+                                                  int index) {
+                                                var _padding = EdgeInsets.all(0.0);
 
-                                              // AppStore Url
-                                              GestureDetector(
+                                                if (index == 0) {
+                                                  _padding =
+                                                      EdgeInsets.only(left: 20.0);
+                                                } else if (index ==
+                                                    categoryImages.length - 1) {
+                                                  _padding =
+                                                      EdgeInsets.only(right: 20.0);
+                                                }
+
+                                                final image = categoryImages[index];
+                                                return Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 10.0,
+                                                      horizontal: 8.0),
+                                                  child: Image.network(
+                                                    image.url,
+                                                    fit: BoxFit.fitWidth,
+                                                  ),
+                                                );
+                                              },
+                                              onPageChanged: (index) {
+                                                pageViewNotifierController
+                                                    .setPage(index);
+                                              },
+                                            ),
+                                          ),
+                                          // dots
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: AnimatedSmoothIndicator(
+                                              activeIndex: pageViewNotifier,
+                                              count: categoryImages.length - 1,
+                                              effect: ScrollingDotsEffect(
+                                                dotHeight: 8.0,
+                                                dotWidth: 8.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Download Link
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          'Download link',
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      // store images
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.only(bottom: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // AppStore Url
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    final url = Uri.parse(
+                                                      homeVM.getAppStoreUrl(
+                                                          appName),
+                                                    );
+                                                    if (!await launchUrl(url)) {
+                                                      throw Exception(
+                                                          'Could not launch $url');
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.transparent),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          // 그림자 색상
+                                                          spreadRadius: 0.1,
+                                                          // 그림자 확산 정도
+                                                          blurRadius: 3,
+                                                          // 그림자 흐림 정도
+                                                          offset: Offset(0,
+                                                              3), // 그림자의 오프셋(위치)
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: CircleAvatar(
+                                                      backgroundImage: AssetImage(
+                                                              'images/AppStore Icon.png')
+                                                          as ImageProvider<
+                                                              Object>,
+                                                    ),
+                                                  ),
+                                                ),
+                                                // PlayStore Url
+                                                if (homeVM.getPlayStoreUrl(
+                                                        appName) !=
+                                                    '')
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.transparent),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          // 그림자 색상
+                                                          spreadRadius: 0.1,
+                                                          // 그림자 확산 정도
+                                                          blurRadius: 3,
+                                                          // 그림자 흐림 정도
+                                                          offset: Offset(0,
+                                                              3), // 그림자의 오프셋(위치)
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        final url = Uri.parse(
+                                                          homeVM.getPlayStoreUrl(
+                                                              appName),
+                                                        );
+
+                                                        if (!await launchUrl(
+                                                            url)) {
+                                                          throw Exception(
+                                                              'Could not launch $url');
+                                                        }
+                                                      },
+                                                      child: CircleAvatar(
+                                                        backgroundImage: AssetImage(
+                                                                'images/PlayStore Icon.png')
+                                                            as ImageProvider<
+                                                                Object>,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            // gitHub Icon
+                                            Container(
+                                              margin: EdgeInsets.only(left: 5.0),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                border: Border.all(
+                                                    color: Colors.transparent),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.3),
+                                                    // 그림자 색상
+                                                    spreadRadius: 0.1,
+                                                    // 그림자 확산 정도
+                                                    blurRadius: 3,
+                                                    // 그림자 흐림 정도
+                                                    offset: Offset(
+                                                        0, 3), // 그림자의 오프셋(위치)
+                                                  ),
+                                                ],
+                                              ),
+                                              child: GestureDetector(
                                                 onTap: () async {
                                                   final url = Uri.parse(
-                                                    homeVM.getAppStoreUrl(appName),
+                                                    homeVM.getGitHubUrl(appName),
                                                   );
+
                                                   if (!await launchUrl(url)) {
                                                     throw Exception(
                                                         'Could not launch $url');
                                                   }
                                                 },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(30),
-                                                    border: Border.all(
-                                                        color: Colors.transparent),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.3),
-                                                        // 그림자 색상
-                                                        spreadRadius: 0.1,
-                                                        // 그림자 확산 정도
-                                                        blurRadius: 3,
-                                                        // 그림자 흐림 정도
-                                                        offset: Offset(
-                                                            0, 3), // 그림자의 오프셋(위치)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: CircleAvatar(
-                                                    backgroundImage: AssetImage(
-                                                        'images/AppStore Icon.png')
-                                                    as ImageProvider<Object>,
-                                                  ),
-                                                ),
-                                              ),
-                                              // PlayStore Url
-                                              if (homeVM.getPlayStoreUrl(appName) !=
-                                                  '')
-                                                Container(
-                                                  margin:
-                                                  EdgeInsets.only(left: 5.0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(30),
-                                                    border: Border.all(
-                                                        color: Colors.transparent),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.3),
-                                                        // 그림자 색상
-                                                        spreadRadius: 0.1,
-                                                        // 그림자 확산 정도
-                                                        blurRadius: 3,
-                                                        // 그림자 흐림 정도
-                                                        offset: Offset(
-                                                            0, 3), // 그림자의 오프셋(위치)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: GestureDetector(
-                                                    onTap: () async {
-                                                      final url = Uri.parse(
-                                                        homeVM.getPlayStoreUrl(
-                                                            appName),
-                                                      );
-
-                                                      if (!await launchUrl(url)) {
-                                                        throw Exception(
-                                                            'Could not launch $url');
-                                                      }
-                                                    },
-                                                    child: CircleAvatar(
-                                                      backgroundImage: AssetImage(
-                                                          'images/PlayStore Icon.png')
+                                                child: CircleAvatar(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundImage: AssetImage(
+                                                          'images/GitHub Icon.png')
                                                       as ImageProvider<Object>,
-                                                    ),
-                                                  ),
                                                 ),
-                                            ],
-                                          ),
-                                          Container(
-                                            margin:
-                                            EdgeInsets.only(left: 5.0),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(30),
-                                              border: Border.all(
-                                                  color: Colors.transparent),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  // 그림자 색상
-                                                  spreadRadius: 0.1,
-                                                  // 그림자 확산 정도
-                                                  blurRadius: 3,
-                                                  // 그림자 흐림 정도
-                                                  offset: Offset(
-                                                      0, 3), // 그림자의 오프셋(위치)
-                                                ),
-                                              ],
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                final url = Uri.parse(
-                                                  homeVM.getPlayStoreUrl(
-                                                      appName),
-                                                );
-
-                                                if (!await launchUrl(url)) {
-                                                  throw Exception(
-                                                      'Could not launch $url');
-                                                }
-                                              },
-                                              child: CircleAvatar(
-                                                backgroundColor: Colors.white,
-                                                foregroundImage: AssetImage(
-                                                    'images/GitHub Icon.png')
-                                                as ImageProvider<Object>,
                                               ),
                                             ),
-                                          ),
-
-                                        ],
+                                          ],
+                                        ),
                                       ),
-
-
-                                      // Tech Stack
+                                      // Tech Stack Text
                                       Container(
                                         padding:
                                             EdgeInsets.symmetric(vertical: 8.0),
@@ -313,6 +453,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                               ScrollConfiguration.of(context)
                                                   .copyWith(scrollbars: false),
                                           child: ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
                                             itemCount: kAppTechStack[appName]!
                                                 .keys
                                                 .length,
@@ -327,8 +469,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                       key]!; // List<String>
 
                                               return Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 4.0),
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 3.0),
                                                 child: Row(
                                                   children: [
                                                     Container(
@@ -337,7 +479,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                       child: Text(
                                                         key,
                                                         style: TextStyle(
-                                                            fontSize: 16.0,
+                                                            fontSize: 12.0,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .normal),
@@ -345,57 +487,70 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                     ),
                                                     Expanded(
                                                       child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        child: Row(
-                                                          children: values
-                                                              .map((value) {
-                                                            return Container(
-                                                              margin: EdgeInsets
-                                                                  .only(
-                                                                      left:
-                                                                          10.0),
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      vertical:
-                                                                          5.0,
-                                                                      horizontal:
-                                                                          8.0),
-                                                              child: Text(
-                                                                  '$value'),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15),
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .grey),
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .withOpacity(
-                                                                            0.3),
-                                                                    // 그림자 색상
-                                                                    spreadRadius:
-                                                                        0.1,
-                                                                    // 그림자 확산 정도
-                                                                    blurRadius:
-                                                                        3,
-                                                                    // 그림자 흐림 정도
-                                                                    offset: Offset(
-                                                                        0,
-                                                                        3), // 그림자의 오프셋(위치)
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            );
-                                                          }).toList(),
+                                                          ScrollConfiguration(
+                                                        behavior:
+                                                            ScrollConfiguration
+                                                                    .of(context)
+                                                                .copyWith(
+                                                                    scrollbars:
+                                                                        false),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          child: Row(
+                                                            children: values
+                                                                .map((value) {
+                                                              return Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10.0),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            3.0,
+                                                                        horizontal:
+                                                                            8.0),
+                                                                child: Text(
+                                                                  '$value',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12.0),
+                                                                ),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              15),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .grey),
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.3),
+                                                                      // 그림자 색상
+                                                                      spreadRadius:
+                                                                          0.1,
+                                                                      // 그림자 확산 정도
+                                                                      blurRadius:
+                                                                          2,
+                                                                      // 그림자 흐림 정도
+                                                                      offset: Offset(
+                                                                          0,
+                                                                          3), // 그림자의 오프셋(위치)
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
                                                         ),
                                                       ),
                                                     )
@@ -406,56 +561,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                           ),
                                         ),
                                       ),
-                                      // 스크린샷
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.43,
-                                        child: PageView.builder(
-                                          padEnds: false,
-                                          itemCount: categoryImages.length,
-                                          controller: homeVM.pageController,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            var _padding = EdgeInsets.all(0.0);
-
-                                            if (index == 0) {
-                                              _padding =
-                                                  EdgeInsets.only(left: 20.0);
-                                            } else if (index ==
-                                                categoryImages.length - 1) {
-                                              _padding =
-                                                  EdgeInsets.only(right: 20.0);
-                                            }
-
-                                            final image = categoryImages[index];
-                                            return Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 10.0,
-                                                  horizontal: 8.0),
-                                              child: Image.network(
-                                                image.url,
-                                                fit: BoxFit.fitWidth,
-                                              ),
-                                            );
-                                          },
-                                          onPageChanged: (index) {
-                                            pageViewNotifierController
-                                                .setPage(index);
-                                          },
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: AnimatedSmoothIndicator(
-                                            activeIndex: pageViewNotifier,
-                                            count: categoryImages.length - 1,
-                                            effect: ScrollingDotsEffect(
-                                              dotHeight: 8.0,
-                                              dotWidth: 8.0,
-                                            )),
-                                      )
                                     ],
                                   ),
                                 ),
@@ -500,7 +605,7 @@ class ProfileWidget extends StatelessWidget {
               ),
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Container(
-                height: 280,
+                height: MediaQuery.of(context).size.height * 0.5,
                 padding: EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -525,11 +630,12 @@ class ProfileWidget extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                height: 150,
-                width: 150,
+                height: 120,
+                width: 120,
                 child: ClipOval(
                   child: Image.network(
                     categoryImages.first.url,
@@ -537,14 +643,19 @@ class ProfileWidget extends StatelessWidget {
                   ),
                 ),
               ), // 프로필 사진
+              SizedBox(
+                width: 10.0,
+              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       localizations.hello,
+                      textAlign: TextAlign.end,
+                      maxLines: 2,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20.0),
+                          fontWeight: FontWeight.bold, fontSize: 18.0),
                     ),
                     Text(
                       localizations.myKeywords,
@@ -559,7 +670,7 @@ class ProfileWidget extends StatelessWidget {
                       textAlign: TextAlign.end,
                       maxLines: 2,
                       style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 18.0),
+                          fontWeight: FontWeight.normal, fontSize: 15.0),
                     ),
                   ],
                 ),
@@ -582,7 +693,9 @@ class ProfileWidget extends StatelessWidget {
                       spacing: 15,
                       expansionFactor: 10),
                   onDotClicked: (page) {
-                    homeVM.profilePageController.jumpToPage(page);
+                    homeVM.profilePageController.animateToPage(page,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
                   },
                 ),
                 Flexible(
@@ -598,18 +711,23 @@ class ProfileWidget extends StatelessWidget {
                         },
                       ),
                       Container(
-                        height: 30,
-                        decoration:
-                        BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Theme.of(context).scaffoldBackgroundColor.withOpacity(1.0), Theme.of(context).scaffoldBackgroundColor.withOpacity(0.1)],
-                              stops: [0.0, 1.0],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
+                        height: 20,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(1.0),
+                              Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(0.1)
+                            ],
+                            stops: [0.0, 1.0],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
                         ),
                       ),
-
                     ],
                   ),
                 ),

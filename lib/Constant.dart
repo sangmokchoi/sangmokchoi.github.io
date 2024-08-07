@@ -1,3 +1,6 @@
+
+const kMyGitHubUrl = "https://github.com/sangmokchoi";
+
 const Map<String, String> kAppNameList = {
   '밤편지: 마음을 주고 받는 편지 한 통': "letter",
   'mug-lite': "muglite",
@@ -9,8 +12,8 @@ const Map<String, String> kAppNameList = {
 const Map<String, Map<String, List<String>>> kAppTechStack = {
   "letter":
     {
-      "UI": ["UIkit", "Storyboard", "(Widget) SwiftUI"],
-      "Communication": ["Confluence", "Jira"],
+      "UI": ["Storyboard", "(Widget) SwiftUI", "UIkit",],
+      "Communication": ["Confluence", "Figma", "Jira"],
       "Database": ["Firebase Firestore", "UserDefaults"],
     "Firebase": ["Authentication", "App Check", "Cloud Functions", "Firestore"],
     "Google": ["AdMob", "Analytics"],
@@ -35,7 +38,7 @@ const Map<String, Map<String, List<String>>> kAppTechStack = {
     "UI": ["Figma",],
     "Communication": ["Confluence"],
     "Database": ["Firebase Firestore", "Firebase Realtime", "Firebase Storage", "shared_preferences"],
-    "Firebase": ["Authentication", "App Check", "Crashlyitics", "Cloud Functions", "Messaging", "Remote Config", "Storage"],
+    "Firebase": ["Authentication", "App Check", "Cloud Functions", "Crashlyitics", "Messaging", "Remote Config", "Storage"],
     "Google": ["AdMob", "Analytics"],
     "Naver": ["Naver Map"],
     "Flutter": ["Provider"],
@@ -49,4 +52,3 @@ const Map<String, Map<String, List<String>>> kAppTechStack = {
     "Flutter": ["Provider"],
   },
 };
-
