@@ -1,0 +1,18 @@
+{
+  "language": "한글",
+  "@language": {
+    "description": "현재 언어"
+  },
+  "myName": "최상목",
+  "hello": "안녕하세요, 최상목이라고 합니다",
+  "myKeywords": "앱 개발자, 마케터",
+  "selfIntroduction": "사람을 잇는 앱을 만들고자 합니다",
+
+  "letterSubtitle": "하루에 한 번, 진심을 담아보내요",
+  "mugliteSubtitle": "빠르게 넘겨가며 찾아보는 뉴스",
+  "twp4bgSubtitle": "여행을 한 눈에 담아요",
+  "dnppSubtitle": "탁구에 새로움을 더하다",
+  "jjgsrSubtitle": "'숏폼'으로 학습하는 토익·한국사·컴활",
+
+  "techStack": "기술 스택"
+}

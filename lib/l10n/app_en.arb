@@ -1,0 +1,19 @@
+{
+  "language": "English",
+  "@language": {
+    "description": "The current Language"
+  },
+  "myName": "Sangmok Choi",
+  "hello": "Hi, I`m Sangmok Choi",
+  "myKeywords": "App Developer, Marketer",
+  "selfIntroduction": "I aim to create apps that connect people",
+
+  "letterSubtitle": "Once a day, send your heartfelt message",
+  "mugliteSubtitle": "Quickly browse through the news",
+  "twp4bgSubtitle": "Capture journey in a glimpse",
+  "dnppSubtitle": "Adding a new dimension to ping pong",
+  "jjgsrSubtitle": "Learning TOEIC, Korean History, and Computer Literacy through 'short-form' content",
+
+  "techStack": "Tech Stack"
+
+}
