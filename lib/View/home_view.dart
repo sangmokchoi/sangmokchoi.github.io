@@ -39,71 +39,75 @@ class _HomeViewState extends ConsumerState<HomeView> {
       body: Column(
         children: [
           // language Change
-          Container(
-            padding: EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+          Column(
+            children: [
+              Container(
+                height: 80,
+                padding: EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // github logo
-                    Container(
-                      margin: EdgeInsets.only(right: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: Colors.transparent),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            // 그림자 색상
-                            spreadRadius: 0.1,
-                            // 그림자 확산 정도
-                            blurRadius: 3,
-                            // 그림자 흐림 정도
-                            offset: Offset(0, 3), // 그림자의 오프셋(위치)
+                    Row(
+                      children: [
+                        // github logo
+                        Container(
+                          margin: EdgeInsets.only(right: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.transparent),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                // 그림자 색상
+                                spreadRadius: 0.1,
+                                // 그림자 확산 정도
+                                blurRadius: 3,
+                                // 그림자 흐림 정도
+                                offset: Offset(0, 3), // 그림자의 오프셋(위치)
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () async {
-                          final url = Uri.parse(kMyGitHubUrl);
+                          child: GestureDetector(
+                            onTap: () async {
+                              final url = Uri.parse(kMyGitHubUrl);
 
-                          if (!await launchUrl(url)) {
-                            throw Exception('Could not launch $url');
-                          }
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          foregroundImage: AssetImage('images/GitHub Icon.png')
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $url');
+                              }
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              foregroundImage: AssetImage('images/GitHub Icon.png')
                               as ImageProvider<Object>,
+                            ),
+                          ),
                         ),
-                      ),
+                        Text(
+                          localizations.myName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20.0),
+                        ),
+                      ],
                     ),
-                    Text(
-                      localizations.myName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('Language:'),
+                        TextButton(
+                            onPressed: () {
+                              toggleLang(context);
+                            },
+                            child: Text(
+                              localizations.language,
+                            ))
+                      ],
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('Language:'),
-                    TextButton(
-                        onPressed: () {
-                          toggleLang(context);
-                        },
-                        child: Text(
-                          localizations.language,
-                        ))
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-
           Expanded(
             child: imageAsyncValue.when(
               data: (images) {
@@ -187,37 +191,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // description
-                                      Container(
-                                        height: 250,
-                                        width: double.infinity,
-                                        padding: EdgeInsets.only(
-                                            top: 10.0, bottom: 15.0, left: 20.0, right: 20.0),
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 15.0),
-                                        child: Scrollbar(
-                                          thickness: 3.0,
-                                          controller: _scrollController,
-                                          thumbVisibility: true,
-                                          child: SingleChildScrollView(
-                                              controller: _scrollController,
-                                              child: Text(
-                                                  homeVM.getAppDescription(
-                                                      appName, localizations))),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                          BorderRadius.circular(30),
-                                        ),
-                                      ),
                                       // 스크린샷
                                       Column(
                                         children: [
-                                          SizedBox(
+                                          Container(
                                             height:
                                             MediaQuery.of(context).size.height *
                                                 0.43,
+                                            margin: EdgeInsets.only(bottom: 8.0),
                                             child: PageView.builder(
                                               padEnds: false,
                                               itemCount: categoryImages.length,
@@ -266,6 +247,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             ),
                                           ),
                                         ],
+                                      ),
+                                      // description
+                                      Container(
+                                        height: 250,
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                            top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 20.0),
+                                        child: Scrollbar(
+                                          thickness: 3.0,
+                                          controller: _scrollController,
+                                          thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                              controller: _scrollController,
+                                              child: Text(
+                                                  homeVM.getAppDescription(
+                                                      appName, localizations))),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(30),
+                                        ),
                                       ),
                                       // Download Link
                                       Padding(
