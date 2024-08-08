@@ -21,7 +21,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.0-1.0.pre.487
+          flutter-version: 3.24.0
 
       # 3
       - name: Build web
