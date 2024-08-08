@@ -25,7 +25,7 @@ jobs:
 
       # 3
       - name: Build web
-        run: flutter build web --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release
 
       # 4
       # https://github.com/marketplace/actions/github-pages-action
