@@ -23,9 +23,9 @@ jobs:
           channel: stable
           flutter-version: 3.24.0
 
-      # 3
-      - name: Build web
-        run: flutter build web
+#      # 3
+#      - name: Build web
+#        run: flutter build web
 
       # 4
       # https://github.com/marketplace/actions/github-pages-action
