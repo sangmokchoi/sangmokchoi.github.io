@@ -610,7 +610,6 @@ class ProfileWidget extends StatelessWidget {
               ),
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.5,
                 padding: EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -684,7 +683,7 @@ class ProfileWidget extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(top: 15),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.6,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
