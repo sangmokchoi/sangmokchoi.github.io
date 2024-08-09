@@ -24,6 +24,7 @@ dependencies:
   firebase_storage_web: ^3.9.12
   url_launcher: ^6.3.0
   smooth_page_indicator: ^1.2.0+3
+  another_flutter_splash_screen: ^1.2.1
 
 
 dev_dependencies:

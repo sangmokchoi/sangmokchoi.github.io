@@ -1,3 +1,4 @@
+import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
@@ -56,23 +57,44 @@ class PP extends ConsumerWidget {
     final locale = ref.watch(localeProvider).locale;
 
     return MaterialApp(
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en'),
-        Locale('ko'),
-      ],
-      locale: locale,
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey,
-      theme: ThemeData(colorSchemeSeed: Colors.white, fontFamily: 'NotoSansKR'),
-      home: HomeView(),
-    );
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en'),
+          Locale('ko'),
+        ],
+        locale: locale,
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
+        theme: ThemeData(colorSchemeSeed: Colors.white, fontFamily: 'NotoSansKR'),
+        home: EntryWidget(),
+      );
   }
+}
+
+Widget EntryWidget() {
+  return FlutterSplashScreen(
+    duration: const Duration(milliseconds: 2000),
+    nextScreen: HomeView(),
+    backgroundColor: Colors.white,
+    splashScreenBody: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(child: CircularProgressIndicator(),),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text('Loading..', style: TextStyle(fontSize: 16.0, color: Colors.grey),),
+          )
+        ],
+      ),
+    ),
+  );
 }
 
 Widget _buildRunnableApp({
