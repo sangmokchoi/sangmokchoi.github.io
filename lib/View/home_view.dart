@@ -37,555 +37,565 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-        body: Column(
-          children: [
-            // language Change
-            Column(
-              children: [
-                Container(
-                  height: 80,
-                  padding: EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          // github logo
-                          Container(
-                            margin: EdgeInsets.only(right: 10.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: Colors.transparent),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  // 그림자 색상
-                                  spreadRadius: 0.1,
-                                  // 그림자 확산 정도
-                                  blurRadius: 3,
-                                  // 그림자 흐림 정도
-                                  offset: Offset(0, 3), // 그림자의 오프셋(위치)
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final url = Uri.parse(kMyGitHubUrl);
-
-                                if (!await launchUrl(url)) {
-                                  throw Exception('Could not launch $url');
-                                }
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                foregroundImage: AssetImage('images/GitHub Icon.png')
-                                as ImageProvider<Object>,
+      body: Column(
+        children: [
+          // language Change
+          Column(
+            children: [
+              Container(
+                height: 80,
+                padding: EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // github logo
+                        Container(
+                          margin: EdgeInsets.only(right: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.transparent),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                // 그림자 색상
+                                spreadRadius: 0.1,
+                                // 그림자 확산 정도
+                                blurRadius: 3,
+                                // 그림자 흐림 정도
+                                offset: Offset(0, 3), // 그림자의 오프셋(위치)
                               ),
+                            ],
+                          ),
+                          child: GestureDetector(
+                            onTap: () async {
+                              final url = Uri.parse(kMyGitHubUrl);
+
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $url');
+                              }
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              foregroundImage:
+                                  AssetImage('images/GitHub Icon.png')
+                                      as ImageProvider<Object>,
                             ),
                           ),
-                          Text(
-                            localizations.myName,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20.0),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text('Language:'),
-                          TextButton(
-                              onPressed: () {
-                                toggleLang(context);
-                              },
-                              child: Text(
-                                localizations.language,
-                              ))
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: imageAsyncValue.when(
-                data: (images) {
-                  // 카테고리별로 이미지 그룹화
-                  final Map<String, List<ImageModel>> categoryMap = {};
-                  for (var image in images) {
-                    if (!categoryMap.containsKey(image.appName)) {
-                      categoryMap[image.appName] = [];
-                    }
-                    categoryMap[image.appName]!.add(image);
-                  }
-
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent, // 구분선 제거
+                        ),
+                        Text(
+                          localizations.myName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20.0),
+                        ),
+                      ],
                     ),
-                    child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context)
-                          .copyWith(scrollbars: false),
-                      child: ListView(
-                        children: categoryMap.keys.map((category) {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('Language:'),
+                        TextButton(
+                            onPressed: () {
+                              toggleLang(context);
+                            },
+                            child: Text(
+                              localizations.language,
+                            ))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: imageAsyncValue.when(
+              data: (images) {
+                // 카테고리별로 이미지 그룹화
+                final Map<String, List<ImageModel>> categoryMap = {};
+                for (var image in images) {
+                  if (!categoryMap.containsKey(image.appName)) {
+                    categoryMap[image.appName] = [];
+                  }
+                  categoryMap[image.appName]!.add(image);
+                }
 
-                          final pageViewNotifier =
-                              ref.watch(pageViewNotifierProvider(category));
-                          final pageViewNotifierController = ref
-                              .read(pageViewNotifierProvider(category).notifier);
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent, // 구분선 제거
+                  ),
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context)
+                        .copyWith(scrollbars: false),
+                    child: ListView(
+                      children: categoryMap.keys.map((category) {
+                        final pageViewNotifier =
+                            ref.watch(pageViewNotifierProvider(category));
+                        final pageViewNotifierController = ref
+                            .read(pageViewNotifierProvider(category).notifier);
 
-                          final categoryImages = categoryMap[category]!;
+                        final categoryImages = categoryMap[category]!;
 
-                          if (!_expandedState.containsKey(category)) {
-                            _expandedState[category] = true;
-                          }
+                        if (!_expandedState.containsKey(category)) {
+                          _expandedState[category] = true;
+                        }
 
-                          if (category == 'me.jpeg') {
-                            // Profile Image & brief Introduction
-                            return ProfileWidget(
-                              categoryImages: categoryImages,
-                              localizations: localizations,
-                              homeVM: homeVM,
-                            );
-                          } else {
-                            final appName = kAppNameList[category]!;
-                            final _scrollController = ScrollController();
-                            // App List
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: ExpansionTile(
-                                initiallyExpanded: _expandedState[category]!,
-                                title: Text(
-                                  category,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.0),
-                                ),
-                                subtitle: Text(
-                                  homeVM.getSubtitle(appName, localizations),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 14.0),
-                                ),
-                                trailing: Icon(
-                                  _expandedState[category] ?? true
-                                      ? Icons.arrow_drop_up
-                                      : Icons.arrow_drop_down,
-                                  color: Colors.grey.withOpacity(0.5),
-                                ),
-                                onExpansionChanged: (bool expanded) {
-                                  setState(() {
-                                    _expandedState[category] = expanded;
-                                  });
-                                },
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 5.0,
-                                        bottom: 0.0,
-                                        left: 18.0,
-                                        right: 18.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // 스크린샷
-                                        Column(
-                                          children: [
-                                            Container(
-                                              height:
-                                              MediaQuery.of(context).size.height *
-                                                  0.43,
-                                              margin: EdgeInsets.only(bottom: 8.0),
-                                              child: PageView.builder(
-                                                padEnds: false,
-                                                itemCount: categoryImages.length,
-                                                controller: homeVM.pageController,
-                                                scrollDirection: Axis.horizontal,
-                                                itemBuilder: (BuildContext context,
-                                                    int index) {
-                                                  var _padding = EdgeInsets.all(0.0);
+                        if (category == 'me.jpeg') {
+                          // Profile Image & brief Introduction
+                          return ProfileWidget(
+                            categoryImages: categoryImages,
+                            localizations: localizations,
+                            homeVM: homeVM,
+                          );
+                        } else {
+                          final appName = kAppNameList[category]!;
+                          final _scrollController = ScrollController();
+                          // App List
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: ExpansionTile(
+                              initiallyExpanded: _expandedState[category]!,
+                              title: Text(
+                                category,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
+                              ),
+                              subtitle: Text(
+                                homeVM.getSubtitle(appName, localizations),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14.0),
+                              ),
+                              trailing: Icon(
+                                _expandedState[category] ?? true
+                                    ? Icons.arrow_drop_up
+                                    : Icons.arrow_drop_down,
+                                color: Colors.grey.withOpacity(0.5),
+                              ),
+                              onExpansionChanged: (bool expanded) {
+                                setState(() {
+                                  _expandedState[category] = expanded;
+                                });
+                              },
+                              expandedCrossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 5.0,
+                                      bottom: 0.0,
+                                      left: 18.0,
+                                      right: 18.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // 스크린샷
+                                      Column(
+                                        children: [
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.43,
+                                            margin:
+                                                EdgeInsets.only(bottom: 8.0),
+                                            child: PageView.builder(
+                                              padEnds: false,
+                                              itemCount: categoryImages.length,
+                                              controller: homeVM.pageController,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                var _padding =
+                                                    EdgeInsets.all(0.0);
 
-                                                  if (index == 0) {
-                                                    _padding =
-                                                        EdgeInsets.only(left: 20.0);
-                                                  } else if (index ==
-                                                      categoryImages.length - 1) {
-                                                    _padding =
-                                                        EdgeInsets.only(right: 20.0);
-                                                  }
+                                                if (index == 0) {
+                                                  _padding = EdgeInsets.only(
+                                                      left: 20.0);
+                                                } else if (index ==
+                                                    categoryImages.length - 1) {
+                                                  _padding = EdgeInsets.only(
+                                                      right: 20.0);
+                                                }
 
-                                                  final image = categoryImages[index];
-                                                  return Container(
-                                                    margin: EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 8.0),
-                                                    child: Image.network(
-                                                      image.url,
-                                                      fit: BoxFit.fitWidth,
-                                                    ),
-                                                  );
-                                                },
-                                                onPageChanged: (index) {
-                                                  pageViewNotifierController
-                                                      .setPage(index);
-                                                },
-                                              ),
-                                            ),
-                                            // dots
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: AnimatedSmoothIndicator(
-                                                activeIndex: pageViewNotifier,
-                                                count: categoryImages.length - 1,
-                                                effect: ScrollingDotsEffect(
-                                                  dotHeight: 8.0,
-                                                  dotWidth: 8.0,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        // description
-                                        Container(
-                                          height: 250,
-                                          width: double.infinity,
-                                          padding: EdgeInsets.only(
-                                              top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 25.0),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                            BorderRadius.circular(30),
-                                          ),
-                                          child: Scrollbar(
-                                            thickness: 3.0,
-                                            controller: _scrollController,
-                                            thumbVisibility: true,
-                                            child: SingleChildScrollView(
-                                                controller: _scrollController,
-                                                child: Text(
-                                                    homeVM.getAppDescription(
-                                                        appName, localizations))),
-                                          ),
-                                        ),
-                                        // Download Link
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 8.0),
-                                          child: Text(
-                                            'Download link',
-                                            style: TextStyle(
-                                                fontSize: 14.0,
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        // store images
-                                        Container(
-                                          margin: EdgeInsets.only(bottom: 15.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  // AppStore Url
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      final url = Uri.parse(
-                                                        homeVM.getAppStoreUrl(
-                                                            appName),
-                                                      );
-                                                      if (!await launchUrl(url)) {
-                                                        throw Exception(
-                                                            'Could not launch $url');
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                30),
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.transparent),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.grey
-                                                                .withOpacity(0.3),
-                                                            // 그림자 색상
-                                                            spreadRadius: 0.1,
-                                                            // 그림자 확산 정도
-                                                            blurRadius: 3,
-                                                            // 그림자 흐림 정도
-                                                            offset: Offset(0,
-                                                                3), // 그림자의 오프셋(위치)
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: CircleAvatar(
-                                                        backgroundImage: AssetImage(
-                                                                'images/AppStore Icon.png')
-                                                            as ImageProvider<
-                                                                Object>,
-                                                      ),
-                                                    ),
+                                                final image =
+                                                    categoryImages[index];
+                                                return Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 10.0,
+                                                      horizontal: 8.0),
+                                                  child: Image.network(
+                                                    image.url,
+                                                    fit: BoxFit.fitWidth,
                                                   ),
-                                                  // PlayStore Url
-                                                  if (homeVM.getPlayStoreUrl(
-                                                          appName) !=
-                                                      '')
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          left: 5.0),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                30),
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.transparent),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.grey
-                                                                .withOpacity(0.3),
-                                                            // 그림자 색상
-                                                            spreadRadius: 0.1,
-                                                            // 그림자 확산 정도
-                                                            blurRadius: 3,
-                                                            // 그림자 흐림 정도
-                                                            offset: Offset(0,
-                                                                3), // 그림자의 오프셋(위치)
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          final url = Uri.parse(
-                                                            homeVM.getPlayStoreUrl(
-                                                                appName),
-                                                          );
-
-                                                          if (!await launchUrl(
-                                                              url)) {
-                                                            throw Exception(
-                                                                'Could not launch $url');
-                                                          }
-                                                        },
-                                                        child: CircleAvatar(
-                                                          backgroundImage: AssetImage(
-                                                                  'images/PlayStore Icon.png')
-                                                              as ImageProvider<
-                                                                  Object>,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
+                                                );
+                                              },
+                                              onPageChanged: (index) {
+                                                pageViewNotifierController
+                                                    .setPage(index);
+                                              },
+                                            ),
+                                          ),
+                                          // dots
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: AnimatedSmoothIndicator(
+                                              activeIndex: pageViewNotifier,
+                                              count: categoryImages.length - 1,
+                                              effect: ScrollingDotsEffect(
+                                                dotHeight: 8.0,
+                                                dotWidth: 8.0,
                                               ),
-                                              // gitHub Icon
-                                              Container(
-                                                margin: EdgeInsets.only(left: 5.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  border: Border.all(
-                                                      color: Colors.transparent),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.3),
-                                                      // 그림자 색상
-                                                      spreadRadius: 0.1,
-                                                      // 그림자 확산 정도
-                                                      blurRadius: 3,
-                                                      // 그림자 흐림 정도
-                                                      offset: Offset(
-                                                          0, 3), // 그림자의 오프셋(위치)
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: GestureDetector(
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // description
+                                      Container(
+                                        height: 250,
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(
+                                            top: 15.0,
+                                            bottom: 15.0,
+                                            left: 20.0,
+                                            right: 20.0),
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 25.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        child: Scrollbar(
+                                          thickness: 3.0,
+                                          controller: _scrollController,
+                                          thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                              controller: _scrollController,
+                                              child: Text(
+                                                  homeVM.getAppDescription(
+                                                      appName, localizations))),
+                                        ),
+                                      ),
+                                      // Download Link
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          'Download link',
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      // store images
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 15.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // AppStore Url
+                                                GestureDetector(
                                                   onTap: () async {
                                                     final url = Uri.parse(
-                                                      homeVM.getGitHubUrl(appName),
+                                                      homeVM.getAppStoreUrl(
+                                                          appName),
                                                     );
-
                                                     if (!await launchUrl(url)) {
                                                       throw Exception(
                                                           'Could not launch $url');
                                                     }
                                                   },
-                                                  child: CircleAvatar(
-                                                    backgroundColor: Colors.white,
-                                                    foregroundImage: AssetImage(
-                                                            'images/GitHub Icon.png')
-                                                        as ImageProvider<Object>,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color: Colors
+                                                              .transparent),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          // 그림자 색상
+                                                          spreadRadius: 0.1,
+                                                          // 그림자 확산 정도
+                                                          blurRadius: 3,
+                                                          // 그림자 흐림 정도
+                                                          offset: Offset(0,
+                                                              3), // 그림자의 오프셋(위치)
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: CircleAvatar(
+                                                      backgroundImage: AssetImage(
+                                                              'images/AppStore Icon.png')
+                                                          as ImageProvider<
+                                                              Object>,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        // Tech Stack Text
-                                        Container(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 8.0),
-                                          child: Text(
-                                            localizations.techStack,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16.0),
-                                          ),
-                                        ),
-                                        // 기술 스택
-                                        Container(
-                                          height: kAppTechStack[appName]!
-                                                  .keys
-                                                  .length *
-                                              35.0,
-                                          child: ScrollConfiguration(
-                                            behavior:
-                                                ScrollConfiguration.of(context)
-                                                    .copyWith(scrollbars: false),
-                                            child: ListView.builder(
-                                              // physics:
-                                              //     NeverScrollableScrollPhysics(),
-                                              itemCount: kAppTechStack[appName]!
-                                                  .keys
-                                                  .length,
-                                              itemBuilder: (context, index) {
-                                                final keys =
-                                                    kAppTechStack[appName]!
-                                                        .keys
-                                                        .toList();
-                                                final key = keys[index];
-                                                final values =
-                                                    kAppTechStack[appName]![
-                                                        key]!; // List<String>
-
-                                                return Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 7.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            right: 8.0),
-                                                        child: Text(
-                                                          key,
-                                                          style: TextStyle(
-                                                              fontSize: 12.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal),
+                                                // PlayStore Url
+                                                if (homeVM.getPlayStoreUrl(
+                                                        appName) !=
+                                                    '')
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color: Colors
+                                                              .transparent),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          // 그림자 색상
+                                                          spreadRadius: 0.1,
+                                                          // 그림자 확산 정도
+                                                          blurRadius: 3,
+                                                          // 그림자 흐림 정도
+                                                          offset: Offset(0,
+                                                              3), // 그림자의 오프셋(위치)
                                                         ),
+                                                      ],
+                                                    ),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        final url = Uri.parse(
+                                                          homeVM
+                                                              .getPlayStoreUrl(
+                                                                  appName),
+                                                        );
+
+                                                        if (!await launchUrl(
+                                                            url)) {
+                                                          throw Exception(
+                                                              'Could not launch $url');
+                                                        }
+                                                      },
+                                                      child: CircleAvatar(
+                                                        backgroundImage: AssetImage(
+                                                                'images/PlayStore Icon.png')
+                                                            as ImageProvider<
+                                                                Object>,
                                                       ),
-                                                      Expanded(
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            // gitHub Icon
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(left: 5.0),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                border: Border.all(
+                                                    color: Colors.transparent),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.3),
+                                                    // 그림자 색상
+                                                    spreadRadius: 0.1,
+                                                    // 그림자 확산 정도
+                                                    blurRadius: 3,
+                                                    // 그림자 흐림 정도
+                                                    offset: Offset(
+                                                        0, 3), // 그림자의 오프셋(위치)
+                                                  ),
+                                                ],
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () async {
+                                                  final url = Uri.parse(
+                                                    homeVM
+                                                        .getGitHubUrl(appName),
+                                                  );
+
+                                                  if (!await launchUrl(url)) {
+                                                    throw Exception(
+                                                        'Could not launch $url');
+                                                  }
+                                                },
+                                                child: CircleAvatar(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundImage: AssetImage(
+                                                          'images/GitHub Icon.png')
+                                                      as ImageProvider<Object>,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // Tech Stack Text
+                                      Container(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8.0),
+                                        child: Text(
+                                          localizations.techStack,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0),
+                                        ),
+                                      ),
+                                      // 기술 스택
+                                      Container(
+                                        height: kAppTechStack[appName]!
+                                                .keys
+                                                .length *
+                                            35.0,
+                                        child: ScrollConfiguration(
+                                          behavior:
+                                              ScrollConfiguration.of(context)
+                                                  .copyWith(scrollbars: false),
+                                          child: ListView.builder(
+                                            // physics:
+                                            //     NeverScrollableScrollPhysics(),
+                                            itemCount: kAppTechStack[appName]!
+                                                .keys
+                                                .length,
+                                            itemBuilder: (context, index) {
+                                              final keys =
+                                                  kAppTechStack[appName]!
+                                                      .keys
+                                                      .toList();
+                                              final key = keys[index];
+                                              final values =
+                                                  kAppTechStack[appName]![
+                                                      key]!; // List<String>
+
+                                              return Container(
+                                                margin: EdgeInsets.only(
+                                                    bottom: 7.0),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          right: 8.0),
+                                                      child: Text(
+                                                        key,
+                                                        style: TextStyle(
+                                                            fontSize: 12.0,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child:
+                                                          ScrollConfiguration(
+                                                        behavior:
+                                                            ScrollConfiguration
+                                                                    .of(context)
+                                                                .copyWith(
+                                                                    scrollbars:
+                                                                        false),
                                                         child:
-                                                            ScrollConfiguration(
-                                                          behavior:
-                                                              ScrollConfiguration
-                                                                      .of(context)
-                                                                  .copyWith(
-                                                                      scrollbars:
-                                                                          false),
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            child: Row(
-                                                              children: values
-                                                                  .map((value) {
-                                                                return Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              10.0),
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          vertical:
-                                                                              3.0,
-                                                                          horizontal:
-                                                                              8.0),
-                                                                  child: Text(
-                                                                    '$value',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            12.0),
-                                                                  ),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                15),
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .grey),
-                                                                    boxShadow: [
-                                                                      BoxShadow(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(
-                                                                                0.3),
-                                                                        // 그림자 색상
-                                                                        spreadRadius:
-                                                                            0.1,
-                                                                        // 그림자 확산 정도
-                                                                        blurRadius:
-                                                                            2,
-                                                                        // 그림자 흐림 정도
-                                                                        offset: Offset(
-                                                                            0,
-                                                                            3), // 그림자의 오프셋(위치)
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              }).toList(),
-                                                            ),
+                                                            SingleChildScrollView(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          child: Row(
+                                                            children: values
+                                                                .map((value) {
+                                                              return Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10.0),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            3.0,
+                                                                        horizontal:
+                                                                            8.0),
+                                                                child: Text(
+                                                                  '$value',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12.0),
+                                                                ),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              15),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .grey),
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.3),
+                                                                      // 그림자 색상
+                                                                      spreadRadius:
+                                                                          0.1,
+                                                                      // 그림자 확산 정도
+                                                                      blurRadius:
+                                                                          2,
+                                                                      // 그림자 흐림 정도
+                                                                      offset: Offset(
+                                                                          0,
+                                                                          3), // 그림자의 오프셋(위치)
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }).toList(),
                                                           ),
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
-                          }
-                        }).toList(),
-                      ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      }).toList(),
                     ),
-                  );
-                },
-                loading: () => Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(child: Text('Error: $error')),
-              ),
+                  ),
+                );
+              },
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
             ),
-          ],
-        ),
-
+          ),
+        ],
+      ),
     );
   }
 }
@@ -595,8 +605,7 @@ class ProfileWidget extends ConsumerWidget {
       {super.key,
       required this.categoryImages,
       required this.localizations,
-      required this.homeVM
-      });
+      required this.homeVM});
 
   final List<ImageModel> categoryImages;
   final AppLocalizations localizations;
@@ -604,13 +613,13 @@ class ProfileWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final localeValue = ref.watch(localeProvider).locale;
 
-    Map<String, Map<String, List<String>>> temp = ('$localeValue' == "en") ? kSelfIntroductionEnList : kSelfIntroductionKrList;
+    Map<String, Map<String, List<String>>> temp = ('$localeValue' == "en")
+        ? kSelfIntroductionEnList
+        : kSelfIntroductionKrList;
 
     final pages = temp.keys.map((category) {
-
       final details = temp[category]!;
 
       final experience = Experience(
@@ -621,78 +630,130 @@ class ProfileWidget extends ConsumerWidget {
 
       final element = experience.companies != null
           ? [
-        Expanded(
-          child: ListView.builder(
-            //physics: NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            itemCount: experience.companies?.length ?? 0,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
+              Expanded(
+                child: ListView.builder(
+                  //physics: NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: experience.companies?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${experience.companies?[index] ?? ""}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text(
+                                          '${experience.durations?[index] ?? ""}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 14.0),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text(
+                                experience.performances?[index] ?? "",
+                                style: TextStyle(fontSize: 14.0),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            ]
+          : [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: details.keys.length,
+                  itemBuilder: (context, index) {
+                    final detailKey = details.keys.elementAt(index);
+                    final values = details[detailKey]!;
+
+                    return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${experience.companies?[index] ?? ""}',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                            "$detailKey:",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0,
+                            ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text('${experience.durations?[index] ?? ""}',
-                                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14.0),),
-                              ),
-                            ],
-                          ),
+                          ...values
+                              .map(
+                                (value) => Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, top: 3.0),
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 15.0),
-                      child: Text(
-                        experience.performances?[index] ?? "",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        )
-      ]
-          : details.keys.map((detailKey) {
-        final values = details[detailKey]!;
+              )
+            ];
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "$detailKey:",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-              ),
-              ...values.map(
-                    (value) => Padding(
-                  padding: const EdgeInsets.only(left: 10.0, top: 3.0),
-                  child: Text(
-                    value,
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList();
+      //     : details.keys.map((detailKey) {
+      //   final values = details[detailKey]!;
+      //
+      //   return Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         Text(
+      //           "$detailKey:",
+      //           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0,),
+      //         ),
+      //         ...values.map(
+      //               (value) => Padding(
+      //             padding: const EdgeInsets.only(left: 10.0, top: 3.0),
+      //             child: Text(
+      //               value,
+      //               style: TextStyle(fontSize: 14.0),
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   );
+      // }).toList();
 
       return Container(
         decoration: BoxDecoration(
@@ -703,12 +764,13 @@ class ProfileWidget extends ConsumerWidget {
         padding: EdgeInsets.all(15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               category,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 8.0),
             ...element
           ],
         ),
@@ -776,7 +838,8 @@ class ProfileWidget extends ConsumerWidget {
               children: [
                 SmoothPageIndicator(
                   controller: homeVM.profilePageController,
-                  count: 3,//pages.length,
+                  count: 3,
+                  //pages.length,
                   axisDirection: Axis.vertical,
                   effect: ExpandingDotsEffect(
                       dotHeight: 10,
