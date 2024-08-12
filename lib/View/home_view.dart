@@ -459,8 +459,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                 ScrollConfiguration.of(context)
                                                     .copyWith(scrollbars: false),
                                             child: ListView.builder(
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
+                                              // physics:
+                                              //     NeverScrollableScrollPhysics(),
                                               itemCount: kAppTechStack[appName]!
                                                   .keys
                                                   .length,
