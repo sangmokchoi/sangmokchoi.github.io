@@ -623,7 +623,7 @@ class ProfileWidget extends ConsumerWidget {
           ? [
         Expanded(
           child: ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            //physics: NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             itemCount: experience.companies?.length ?? 0,
             itemBuilder: (context, index) {
